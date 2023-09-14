@@ -1,0 +1,46 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { /* getLastestLaunches, */ getLaunchById } from '../../services/spacex';
+
+// para que sea ssr
+export const prerender = false;
+
+// cookies
+// if (Astro.cookies.get('user')) {
+//   console.log('user logged');
+//   Astro.redirect('/unauthorized');
+// } else {
+//   console.log('user not logged');
+// }
+
+const { id } = Astro.params;
+// console.log({id});
+
+let launch;
+if (id) {
+  launch = await getLaunchById({ id });
+}
+
+// normal ssg y sin ser hybrida
+// export async function getStaticPaths() {
+//   // llamar a una API externa
+//   // para aber todas las ids que debes generar
+//   const launches = await getLastestLaunches();
+
+//   return launches.map((launch) => ({
+//     params: { id: launch.id },
+//   }));
+// }
+
+// console.log(launch);
+---
+
+<Layout title=`Lanzamiento ${id}`>
+  <article class='flex gap-y-4 flex-col'>
+    <img class='w-52 h-auto' src={launch?.links?.patch.small} alt={launch?.name} />
+    <h2 class='text-4xl text-white font-bold'>
+      Launch#{launch?.flight_number}
+    </h2>
+    <p class='text-lg'>{launch?.details}</p>
+  </article>
+</Layout>
